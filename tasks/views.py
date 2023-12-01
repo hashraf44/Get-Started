@@ -3,6 +3,11 @@ from .models import Task
 from .serializers import taskSerializer, userSerializer
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.models import User
+from django.shortcuts import render
+from django.views import View
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.db.models import Count
 
 
 class taskViewSet(viewsets.ModelViewSet):
@@ -34,3 +39,19 @@ class userProfile(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+    
+@method_decorator(login_required, name='dispatch')
+class Dashboard(View):
+    template_name = 'dashboard/dashboard.html'
+
+    def get(self, request, *args, **kwargs):
+        tasks = Task.objects.filter(assigned_to = request.user)
+        total_tasks = tasks.count()
+        completed_tasks = tasks.filter(status = 'completed').count()
+
+        context = {
+            'total_tasks': total_tasks,
+            'completed_tasks': completed_tasks,
+        }
+
+        return render(request, self.template_name, context)
