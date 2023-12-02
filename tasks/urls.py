@@ -1,5 +1,5 @@
 from rest_framework.routers import DefaultRouter
-from .views import taskViewSet, userRegistration, userProfile
+from .views import taskViewSet, userRegistration, userProfile, Dashboard
 from django.urls import path
 
 router = DefaultRouter()
@@ -9,5 +9,6 @@ urlpatterns = router.urls
 urlpatterns = [
     *router.urls,
     path('users/register/', userRegistration.as_view(), name='user-register'),
-    path('users/profile/', userProfile.as_view(), name='user-profile')
+    path('users/profile/', userProfile.as_view(), name='user-profile'),
+    path('dashboard/', Dashboard.as_view(), name='dashboard')
 ]
